@@ -12,6 +12,8 @@ target 'Uber_firebase' do
     :hermes_enabled => false
   )
 
+  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+
   target 'Uber_firebaseTests' do
     inherit! :complete
     # Pods for testing
