@@ -1,65 +1,103 @@
-import * as React from 'react';
-import {
-  NativeBaseProvider,
-  Box,
-  Text,
-  Heading,
-  VStack,
-  FormControl,
-  Input,
-  Link,
-  Button,
-  Icon,
-  IconButton,
-  HStack,
-  Divider
-} from 'native-base';
+import React, {useState, useEffect} from 'react'
+import {NativeBaseProvider,Box,Text,Heading,VStack,FormControl,Input,Link,Button,Icon,IconButton,HStack,Divider} from 'native-base';
+import Avatar from '../components/Avatar';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
-export default function CreateAccount() {
+export default function CreateAccount({navigation}) {
+
+  const [formData, setData] = React.useState({});
+  const [errors, setErrors] = React.useState({});
+  const [Img, setImg] = useState(require('../assets/ic_newCon.jpg'));
+  
+  const validate = () => {
+    if (formData.name === undefined || formData.email === undefined || formData.password === undefined) {
+      setErrors({ ...errors, password: 'Svp veuiller remplir tous les champs.' });
+      return false;
+    }else if(formData.email.length < 12 || formData.password.length < 6){
+      setErrors({ ...errors, password: 'Informations Invalide.' });
+      return false;
+    }
+    return true;
+  };
+
+  const save=()=>{
+    console.log(formData);
+    auth()
+  .createUserWithEmailAndPassword(formData.email, formData.password)
+  .then((resp) => {
+      resp.user.sendEmailVerification();
+      console.log("okjn");
+      var IdCreation=resp.user.uid;
+      console.log(IdCreation);
+      const fileStoragePath = "ImageUserProfil/"+resp.user.uid;
+      const imageRef= storage().ref(fileStoragePath);
+      imageRef.putString(Img.uri).then(()=>{
+         
+        firestore().doc(`user/${IdCreation}`).set({
+          username:formData.name,
+          email:formData.email,
+          password:formData.password,
+          image: fileStoragePath,
+          id: IdCreation,
+          telephone:''
+        })
+      })
+      navigation.navigate('Authentification')
+    console.log('User account created & signed in!');
+  })
+  .catch(error => {
+    if (error.code === 'auth/email-already-in-use') {
+      console.log('That email address is already in use!');
+    }
+
+    if (error.code === 'auth/invalid-email') {
+      console.log('That email address is invalid!');
+    }
+
+    console.error(error);
+  });
+  }
+
+  const onSubmit = () => {
+    validate() ? save() : console.log("validation failled");
+  };
 
  return (
       <NativeBaseProvider>
-      <Box
-        flex={1}
-        p={2}
-        w="90%"
-        mx='auto'
-      >
-        <Heading size="lg" color='primary.500'>
-          Welcome
-        </Heading>
-        <Heading color="muted.400" size="xs">
-          Sign up to continue!
-        </Heading>
+        <Avatar
+        setImg={setImg}
+        Img={Img}/>
+      <Box  p={2} w="90%" mx='auto' >
+        
+        <VStack space={0} mt={0}>
+          <FormControl isRequired isInvalid={'password' in errors}>
+                <FormControl.Label _text={{bold: true}}>Name</FormControl.Label>
+                <Input placeholder="Oldrich" onChangeText={(value) => setData({ ...formData, name: value })} />
+                
+            </FormControl>
+            <FormControl isRequired isInvalid={'password' in errors}>
+                <FormControl.Label _text={{bold: true}}>Email</FormControl.Label>
+                <Input placeholder="example@gmail.com" onChangeText={(value) => setData({ ...formData, email: value })} />
+               
+            </FormControl>
+            <FormControl isRequired isInvalid={'password' in errors}>
+                <FormControl.Label _text={{bold: true}}>Password</FormControl.Label>
+                <Input placeholder="*******" onChangeText={(value) => setData({ ...formData, password: value })} />
+                {'password' in errors ?
+                <FormControl.ErrorMessage _text={{fontSize: 'xs', color: 'error.500', fontWeight: 500}}>{errors.password}</FormControl.ErrorMessage>
+        :
+                <FormControl.HelperText _text={{fontSize: 'xs'}}>Entrer un mot de passe d'au moins 6 caracteres. </FormControl.HelperText>
+                }
+            </FormControl>
+          
+          <Button  onPress={onSubmit} mt={5} colorScheme="cyan" _text={{color: 'white' }}> SignUp  😊 </Button>
+          
+          <Heading size="lg" color='primary.500'>
+            Merci
+          </Heading>
 
-        <VStack space={2} mt={5}>
-          <FormControl>
-            <FormControl.Label _text={{color: 'muted.700', fontSize: 'sm', fontWeight: 600}}>
-                Email
-            </FormControl.Label>
-            <Input />
-          </FormControl>
-          <FormControl>
-            <FormControl.Label  _text={{color: 'muted.700', fontSize: 'sm', fontWeight: 600}}>
-                Password
-            </FormControl.Label>
-            <Input type="password" />
-          </FormControl>
-          <FormControl>
-            <FormControl.Label  _text={{color: 'muted.700', fontSize: 'sm', fontWeight: 600}}>
-               Confirm Password
-            </FormControl.Label>
-            <Input type="password" />
-          </FormControl>
-          <VStack  space={2}  mt={5}>
-          <Button colorScheme="cyan" _text={{color: 'white' }}>
-              SignUp
-          </Button>
-
-<HStack justifyContent="center" alignItem='center' >
-         
-          </HStack>
-          </VStack>
         </VStack>
       </Box>
     </NativeBaseProvider>

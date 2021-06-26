@@ -16,6 +16,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import FirstPage from '../explore/FirstPage';
 import SecondPage from '../explore/SecondPage';
 import ThirdPage from '../explore/ThirdPage';
+import ProfilUser from "../profil_user/ProfilUser"
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -119,6 +120,10 @@ function Home() {
           name="SecondPage"
           options={{ drawerLabel: 'Second page Option' }}
           component={secondScreenStack} />
+        <Drawer.Screen
+          name="ProfilUser"
+          options={{ drawerLabel: 'Profil' }}
+          component={ProfilUser} />
       </Drawer.Navigator>
     
   );
