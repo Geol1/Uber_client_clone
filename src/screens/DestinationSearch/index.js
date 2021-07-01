@@ -1,4 +1,4 @@
-import React ,{useState} from 'react';
+import React ,{useState,useEffect} from 'react';
 import {View, TextInput,SafeAreaView} from 'react-native';
 
 
@@ -9,33 +9,51 @@ import styles from './styles.js';
 
 const DestinationSearch = (props ) => {
 
-    const [fromText, setfromText] = useState( );
-    const [destinationText, setDestinationText] = useState( );
+    
 
+const[originPlace, setOriginPlace]= useState(null);
+const[destinationPlace, setdestinationPlace]= useState(null);
+
+useEffect(() => {
+ 
+}, [originPlace, destinationPlace]);
 
   return(
   <SafeAreaView> 
-    <View>
+    <View style={styles.container}>
     
-<TextInput 
 
-value={fromText}
-onTextChange={setfromText}
-onChangeText ={styles.TextInput}
- placeholder="Form"/> 
+    <GooglePlacesAutocomplete
+      placeholder='Search'
+      onPress={(data, details = null) => {
+        setdestinationPlace( value= {data, details});
+        
+        // 'details' is provided when fetchDetails = true
+        console.log(data, details);
+      }}
+      styles={{
+        textInput: styles.TextInput,
+      }}
+      fetchDetails
+      query={{
+        key: 'AIzaSyDF4qNdlGlnjynejny8uRTnxJOuyj2r6bw',
+        language: 'en',
+      }}
+    />
 
- <TextInput 
- value={destinationText}
- onChangeText={setDestinationText} 
- style ={styles.TextInput} 
- placeholder="where to?"/>
 
 <GooglePlacesAutocomplete
       placeholder='Search'
       onPress={(data, details = null) => {
+        setdestinationPlace( value= {data, details});
+        
         // 'details' is provided when fetchDetails = true
         console.log(data, details);
       }}
+      styles={{
+        textInput: styles.TextInput,
+      }}
+      fetchDetails
       query={{
         key: 'AIzaSyDF4qNdlGlnjynejny8uRTnxJOuyj2r6bw',
         language: 'en',

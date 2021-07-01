@@ -1,9 +1,9 @@
 import React from 'react';
 import {StatusBar} from 'react-native';
 
-// import DestinationSearch from './src/screens/DestinationSearch/index';
+import SearchResult from './src/screens/SearchResult/index';
 
-import HomeScreen from './src/screens/HomeScreen/index';
+// import HomeScreen from './src/screens/HomeScreen/index';
 
 
 
@@ -12,7 +12,7 @@ const App = () => {
   return(
     <>
      <StatusBar barStyle="dark-content" />
-     <HomeScreen/>
+     <SearchResult/>
     </>
   );
 };
