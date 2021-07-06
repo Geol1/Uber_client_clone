@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Uber_firebase</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCMk_hCEpkLNxb7TYGaGXN39n017YDYOXU</string>
 </resources>

@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { StyleSheet, TouchableOpacity ,state,View,Button,Text,Image,Pressable} from 'react-native';
 import * as ImagePicker from "react-native-image-picker";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import stringsoflanguages from "../langue/screenString";
 
 const options = {
     mediaType:'mixed',
@@ -10,7 +11,7 @@ const options = {
     maxWidth: 200,
   };
   
-  export default function Avatar({Img,setImg}){
+  export default function Avatar({Img,setImg,Img1,setImg1}){
 
     const state = {
       avatar: Img
@@ -44,6 +45,8 @@ const openGallery =()=>{
               } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
               } else {
+                console.log(response.assets[0].base64);
+                // setImg1({uri:  response.assets[0].base64})
                 setImg({uri:  "data:image/gif;base64,"+response.assets[0].base64})
               }
             //   console.log(response);
@@ -57,14 +60,14 @@ const openGallery =()=>{
       <View style={styles.topContainer}>
         <View style={styles.metaContainer}>
           <View>
-            <Text style={styles.timings}>Comment voulez-vous  </Text>
-            <Text style={styles.timings}>choisir une image ? </Text>
-            <Text style={styles.description}>Prendre une photo</Text>
-            <Text style={styles.timings}>cliquer sur l'image. </Text>
+            <Text style={styles.timings}>{stringsoflanguages.avatar.text1}  </Text>
+            <Text style={styles.timings}>{stringsoflanguages.avatar.text2} </Text>
+            <Text style={styles.description}>{stringsoflanguages.avatar.text3}</Text>
+            <Text style={styles.timings}>{stringsoflanguages.avatar.text4} </Text>
           </View>
           
           <Pressable  style={styles.button} onPress={ openGallery }>
-            <Text style={styles.buttonText}>Ouvrir La Gallery</Text>
+            <Text style={styles.buttonText}>{stringsoflanguages.avatar.text5}</Text>
           </Pressable>
         </View>
         <TouchableOpacity  style={styles.touchableOpacity} onPress={openPicker}>

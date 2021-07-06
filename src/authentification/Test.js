@@ -1,16 +1,24 @@
-// Components/Favorites.js
-import * as React from 'react';
-import {  View ,StyleSheet,Text} from 'react-native'
-import Avatar from '../components/Avatar';
-// import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-export default class Favorites extends React.Component {
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 
-  render() {
-    return (
-      <View >
-          <Avatar/>
-    </View>
-    )
-  }
+import LanguageSelectionScreen from "../langue/languageSelectionScreen"
+import ContentScreen from "../langue/contentScreen"
+
+
+
+const Stack = createStackNavigator();
+
+export default function Parametre() {
+  return (
+    <Stack.Navigator  screenOptions={{ 
+            headerStyle: { backgroundColor: '#000'},
+            headerTintColor: '#FFF', 
+            headerTitleStyle: { fontWeight: 'bold' }
+      }}>
+     
+        <Stack.Screen options={{headerShown: false}} name="LanguageSelectionScreen" component={LanguageSelectionScreen} />
+        <Stack.Screen options={{headerShown: false}}  name="ContentScreen" component={ContentScreen} />
+    </Stack.Navigator>
+  );
 }

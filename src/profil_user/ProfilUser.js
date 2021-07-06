@@ -1,13 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useState, useEffect} from 'react'
-import { StyleSheet, TouchableOpacity ,state,View,Image,Pressable} from 'react-native';
-import {NativeBaseProvider,Box,Text,Heading,VStack,FormControl,Input,Link,Button,Icon,IconButton,HStack,Divider} from 'native-base';
+import React, {useState, useEffect,useRef} from 'react'
+import { StyleSheet, TouchableOpacity ,View,Image,Pressable} from 'react-native';
+import {NativeBaseProvider,Box,Text,Heading,VStack,FormControl,Input,Button,Icon,Collapse,useToast} from 'native-base';
 import * as ImagePicker from "react-native-image-picker";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-
+import Ionicons from "react-native-vector-icons/Ionicons";
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+
+import stringsoflanguages from "../langue/screenString";
+import AlertController from "../components/AlertController"
+import Toast from "../components/Toast"
 
 const options = {
     mediaType:'mixed',
@@ -16,29 +20,29 @@ const options = {
     maxWidth: 200,
   };
   
-export default function Profil(){
-    const [data , setdata] = useState("");
+export default function Profil({navigation}){
+    const [show, setShow] = useState(false);
+    const toast = useToast();
+    const toastIdRef = useRef();
+    
+    const [Img,setImg]=useState(require('../assets/ic_newCon.jpg'))
+    const [alert, setAlert] = useState({title:"Deconnexion",status:"warning",description:"Etes-vous sur de vouloir vous deconnecter?"})
     const [id , setId] = useState("");
-    const email= "delano@gmail.com"
-
-    const [Img, setImg] = useState(require('../assets/ic_newCon.jpg'));
-    const [user, setUser] = useState( {nom:"Geol",telephone:"+237 675155255",Img: require('../assets/ic_newCon.jpg')} );
+    const [isEdit, setIsEdit]=useState(false);
+    const [formData, setData] = React.useState({});
+    const [errors, setErrors] = React.useState({});
+    const [user, setUser] = useState( {username:"",telephone:"+237 ********",image: require('../assets/ic_newCon.jpg'),email: "mail"} );
     const getId = async () => {
         try {
-        const value = await AsyncStorage.getItem('userId')
-        console.log(value);
-        if(value !== null) {
-            console.log("ok");
-            setId(value);
-        }
-        }  catch (e){
-        console.error(e);
-        }
+          const value = await AsyncStorage.getItem('userId')
+          if(value !== null){ setId(value); setId(value) }
+        }  catch (e){console.error(e);}
     }
     const state = {
-      avatar: Img
+      avatar:Img
     }
-    openPicker =()=>{
+    
+   const openPicker =()=>{
         
         launchCamera(options, (response) => { 
         
@@ -75,103 +79,133 @@ export default function Profil(){
         
         
     }
-     useEffect(() => {
-         getId()
-          const subscriber = firestore()
-            .collection('user')
-            .doc(id)
-            .onSnapshot(documentSnapshot => {
-              console.log('User data: ', documentSnapshot.data());
-            //   setUser(documentSnapshot.data())
-            });
-      
-          // Stop listening for updates when no longer required
-          return () => subscriber();
-        });
-      
-   const getUser= ()=>{
-        firestore.collection('user/').get().subscribe(images => {
-            this.tabDisc=[]
-            var TabUserDiscuss=[]
-            images.docs.forEach((doc)=>{
-              TabUserDiscuss.push(doc.data());
-            })
-            TabUserDiscuss.map((element)=>{
-              const refImage = storage.ref(element.image)
-              refImage.getDownloadURL().subscribe(imgUrl => {
-                if(element.id!=localStorage.getItem("userId")){
-                    const contact={
-                      nom: element.username,
-                      email: element.email,
-                      id: element.id,
-                      Img: imgUrl,
-                      telephone: element.telephone,
-                    }
-                  this.nbrContact++;
-                  this.tabDisc.push(contact)
-                  return this.tabDisc
-                }
-              });
-            })
-          });
+    function toaster() {
+      toastIdRef.current = toast.show({
+        title: "Hi, Nice to see you ( ´ ∀ ` )ﾉ",
+      })
     }
-    return(
-        <NativeBaseProvider>
-          
-      <Box flex={1} p={2}  w="90%" mx='auto' >
-        <View style={styles.container}>
-      <View style={styles.topContainer}>
-        <View style={styles.metaContainer}>
-        <TouchableOpacity  style={styles.touchableOpacity} onPress={openPicker}>
-                <Image style={styles.avatar} source={state.avatar} />
-         </TouchableOpacity>
-          <Pressable  style={styles.button} onPress={ openGallery }>
-            <Text style={styles.buttonText}>Ouvrir La Gallery</Text>
-          </Pressable>
+    
+    const CurrentUser=() => {
+         getId().then(
+         profil= firestore().collection('user').doc(id).get().then(documentSnapshot => {
+            const refImage = storage().ref(documentSnapshot.data().image)
+            refImage.getDownloadURL().then(function(url) {
+              setImg({uri: url});
+              setUser({username:documentSnapshot.data().username,telephone:documentSnapshot.data().telephone,image: {uri: url},email: documentSnapshot.data().email})
+            })
+          })
+          )
+    }
 
-        <VStack space={2} mt={5}>
-          <FormControl>
-            <FormControl.Label _text={{color: 'muted.700', fontSize: 'sm', fontWeight: 600}}>
-                Nom 
-            </FormControl.Label>
-            <Input placeholder={user.nom} />
-          </FormControl>
-          <FormControl>
-            <FormControl.Label  _text={{color: 'muted.700', fontSize: 'sm', fontWeight: 600}}>
-                Telephone
-            </FormControl.Label>
-            <Input placeholder={user.telephone}  />
-          </FormControl>
-          <FormControl>
-            <FormControl.Label  _text={{color: 'muted.700', fontSize: 'sm', fontWeight: 600}}>
-               Email    
-            </FormControl.Label>
-            <Input placeholder={email} />
-          </FormControl>
-         
-        </VStack>
-   
-        </View>
-         <View style={styles.container}>
-        <Text style={styles.text}>{data}</Text>
-        <View style={styles.button} >
-          <Button
-            onPress={getId}
-          >Editer le profile</Button>
-        </View>
-        <View style={styles.button} >
-          {/* <Button
-            onPress={CurrentUser}
-          > get user</Button> */}
-        </View>
-</View>
-      </View>
-    </View>
-      </Box>
-    </NativeBaseProvider>
+    const UpdateProfil=()=>{
+      firestore().collection('user').doc(id)
+        .update({username:formData.name,telephone:formData.telephone})
+        .then(() => {
+           var imageRef= storage().ref("ImageUserProfil/"+id);
+            imageRef.delete().then(() => {
+              let fileUri = decodeURI(Img.uri)
+              imageRef.putString(fileUri,`data_url`).then(()=>{
+                console.log(fileUri);
+                console.log("File deleted successfully")
+              })
+              
+            }).catch((error) => {
+            });
+        });
+    }
+    const EditProfil=()=>{
+      console.log(formData);
+      setIsEdit(!isEdit)
+      UpdateProfil()
+    }
+    const LogOut=()=>{
+      console.log("kpkpkpkpkpk");
+      auth().signOut().then(() => navigation.navigate('Authentification'));
+      setShow(false) 
+    }
+    const validate = () => {
+      if (formData.name === undefined || formData.telephone === undefined ) {
+        setErrors({ ...errors, telephone: 'Svp veuiller remplir tous les champs.' });
+        return false;
+      }else if(formData.telephone.length < 6){
+        setErrors({ ...errors, telephone: 'Informations Invalide.' });
+        return false;
+      }
+      return true;
+    };
+    useEffect(() => CurrentUser(),[id]);
+     const onSubmit = () => {
+      validate() ? EditProfil() : console.log("validation failled");
+    };
+    return(
+      <NativeBaseProvider>
+        <AlertController show={show} alert={alert} setShow={setShow} LogOut={LogOut}/>
+        {/* <Toast/> */}
+        <Box flex={1} p={2}  w="90%" mx='auto' >
+          {    <View style={styles.container}>
+            <View style={styles.topContainer}>
+              <View style={styles.metaContainer}>
+              <TouchableOpacity  style={styles.touchableOpacity} onPress={openPicker} disabled={!isEdit}> 
+                      <Image style={styles.avatar} source={state.avatar} />
+              </TouchableOpacity>
+                <Pressable  style={styles.button} onPress={ openGallery } disabled={!isEdit}>
+                  <Text style={styles.buttonText}>{stringsoflanguages.avatar.text5}  <Ionicons name={'cloud-circle-outline'} size={30} /> </Text>
+                </Pressable>
+
+              <VStack space={2} mt={5}>
+                <FormControl isRequired isInvalid={'telephone' in errors}>
+                  <FormControl.Label _text={{color: '#FFF', fontSize: 'sm', fontWeight: 600}}>
+                      {stringsoflanguages.name} 
+                  </FormControl.Label>
+                  <Input isDisabled={!isEdit}  defaultValue={user.username} onChangeText={(value) => setData({ ...formData, name: value })}/>
+                </FormControl>
+                <FormControl isRequired isInvalid={'telephone' in errors}>
+                  <FormControl.Label  _text={{color:'#FFF', fontSize: 'sm', fontWeight: 600}}>
+                  {stringsoflanguages.telephone} <Ionicons name={'call-outline'} color={'#FFF'} size={20} /> 
+                  </FormControl.Label>
+                  <Input isDisabled={!isEdit} defaultValue={user.telephone} onChangeText={(value) => setData({ ...formData, telephone: value })}/>
+                  {'telephone' in errors ?
+                    <FormControl.ErrorMessage _text={{fontSize: 'xs', color: 'error.500', fontWeight: 500}}>{errors.password}</FormControl.ErrorMessage>
+            :
+                    <FormControl.HelperText _text={{fontSize: 'xs'}}>{stringsoflanguages.profil.description1}</FormControl.HelperText>
+                  }
+                </FormControl>
+                <FormControl>
+                  <FormControl.Label  _text={{color:'#FFF', fontSize: 'sm', fontWeight: 600}}>
+                  {stringsoflanguages.mail}   <Ionicons name={'mail'}  color={'#FFF'} size={20} />  
+                  </FormControl.Label>
+                  <Input defaultValue={user.email} isDisabled />
+                </FormControl>
+              
+              </VStack>
+              </View>
+            <Collapse isOpen={isEdit}>
+              <Button.Group variant="solid" isAttached space={6} mx={{ base: "auto", md: 0, }} mt={5} >
+                <Button endIcon={<Icon as={Ionicons} name="pencil-sharp" size={4} />} colorScheme="primary" mr={2} 
+                  onPress={onSubmit}>{stringsoflanguages.profil.btn1}
+                </Button>
+                <Button  onPress={() => setIsEdit(!isEdit)} colorScheme="dark" _text={{ color: "white" }} >{stringsoflanguages.profil.btn4}</Button>
+              </Button.Group>
+              </Collapse>
+            </View>
+          </View>}
+          <Collapse isOpen={!isEdit}>
+            <Button.Group variant="solid" isAttached space={6} mx={{ base: "auto", md: 0, }} mt={5}>
+              
+              <Button endIcon={<Icon as={Ionicons} name="person" size={4} />} mr={2} 
+              onPress={()=>{setData({ ...formData, name: user.username,telephone:user.telephone }), setIsEdit(!isEdit) }}>{stringsoflanguages.profil.btn1}</Button>
+       
+              <Button colorScheme="dark" mr={2} onPress={()=>{navigation.navigate('Parametre')}}>{stringsoflanguages.profil.btn2}</Button>
+              <Button  onPress={() => setShow(true)} colorScheme="teal" _text={{ color: "white" }} 
+              endIcon={<Icon as={Ionicons} name="power" size={4} />}>{stringsoflanguages.profil.btn3}</Button>
+            </Button.Group>
+          </Collapse>
+        </Box>
+      </NativeBaseProvider>
     )
   
 }
+
 
 const styles = StyleSheet.create({
     container: {

@@ -1,14 +1,17 @@
-
-import React , {useState} from 'react';
-// import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import React , {useState,useEffect} from 'react';
 import {NativeBaseProvider,Box,Text,Heading,VStack,FormControl,Input,Link,Button,Icon,IconButton,HStack,Divider } from 'native-base';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Authentification({ navigation }) {
+import stringsoflanguages from "../langue/screenString";
+
+export default function Authentification({route, navigation }) {
   const [formData, setData] = React.useState({});
   const [errors, setErrors] = React.useState({});
   const [id , setId] = useState("");
+  const [lang ,setLang]=useState("en")
+  const [statut,setStatut]=useState("deconnecte")
+  // const { langue} = route.params;
   const validate = () => {
     if (formData.email === undefined || formData.password === undefined) {
       setErrors({ ...errors, password: 'Svp veuiller remplir tous les champs.' });
@@ -53,44 +56,46 @@ export default function Authentification({ navigation }) {
       console.error(e);
     }
   }
-  
-  // const get = async () => {
-  //   try {
-  //     const value = await AsyncStorage.getItem('userId')
-  //     console.log(value);
-  //     if(value !== null) {
-  //       console.log("ok");
-  //         setId(value);
-  //     }
-  //   }  catch (e){
-  //     console.error(e);
-  //   }
-  // }
 
+  const getStatut = async () => {
+    try {
+      const value = await AsyncStorage.getItem('statut')
+      if(value !== null){ setStatut({statut: value}); if(value==="connecte"){navigation.navigate("Home")}; console.log(statut);}
+      else{console.log(statut); AsyncStorage.setItem('statut',"deconnecte")} 
+    }  catch (e){console.error(e); }
+  }
+  const getLang = async () => {
+    try {
+      const value = await AsyncStorage.getItem('lang')
+      if(value !== null){ setLang({lang: value});stringsoflanguages.setLanguage(lang);console.log("ok"); }
+    }  catch (e){console.error(e);}
+  }
+  useEffect(() => getLang().then(getStatut()),[]);
+  // useEffect(() => getLang().then(getStatut()),[langue]);
   const onSubmit = () => {
     validate() ? save() : alert("validation failled");
   };
  return (
       <NativeBaseProvider>
       <Box flex={1} p={2} w="90%" mx='auto' >
-        <Heading size="lg" color='primary.500'> Welcome </Heading>
-        <Heading color="muted.400" size="xs"> Sign in to continue!</Heading>
+        <Heading size="lg" color='primary.500'>{stringsoflanguages.authentification.title} </Heading>
+        <Heading color="muted.400" size="xs">{stringsoflanguages.authentification.subtitle}</Heading>
 
         <VStack space={2} mt={5}>
           <FormControl>
           
             <FormControl isRequired isInvalid={'password' in errors}>
-                <FormControl.Label _text={{bold: true}}>Email</FormControl.Label>
-                <Input placeholder="example@gmail.com" onChangeText={(value) => setData({ ...formData, email: value })} />
+                <FormControl.Label _text={{bold: true}}>{stringsoflanguages.email}</FormControl.Label>
+                <Input placeholder={stringsoflanguages.placeholderEmail} onChangeText={(value) => setData({ ...formData, email: value })} />
                
             </FormControl>
             <FormControl isRequired isInvalid={'password' in errors}>
-                <FormControl.Label _text={{bold: true}}>Password</FormControl.Label>
+                <FormControl.Label _text={{bold: true}}>{stringsoflanguages.pass}</FormControl.Label>
                 <Input placeholder="*******" onChangeText={(value) => setData({ ...formData, password: value })} />
                 {'password' in errors ?
                 <FormControl.ErrorMessage _text={{fontSize: 'xs', color: 'error.500', fontWeight: 500}}>{errors.password}</FormControl.ErrorMessage>
         :
-                <FormControl.HelperText _text={{fontSize: 'xs'}}>Entrer un mot de passe d'au moins 6 caracteres. </FormControl.HelperText>
+                <FormControl.HelperText _text={{fontSize: 'xs'}}>{stringsoflanguages.authentification.description} </FormControl.HelperText>
                 }
             </FormControl>
           
@@ -98,11 +103,11 @@ export default function Authentification({ navigation }) {
 
             <Link _text={{ fontSize: 'xs', fontWeight: '700', color:'cyan.500' }} alignSelf="flex-end" mt={1}
               onPress={ () => navigation.navigate('ForgotPassword') }>
-              Forget Password?
+              {stringsoflanguages.authentification.oublie}
             </Link>
           </FormControl>
           <VStack  space={2}>
-          <Button  onPress={onSubmit} mt={5} colorScheme="cyan" _text={{color: 'white' }}> Login  😊 </Button>
+          <Button small  onPress={onSubmit} mt={5} colorScheme="cyan" _text={{color: 'white' }}>{stringsoflanguages.authentification.btn2}</Button>
           
 
 <HStack justifyContent="center" alignItem='center'>
@@ -110,16 +115,16 @@ export default function Authentification({ navigation }) {
           </HStack>
           </VStack>
           <HStack justifyContent="center">
-            <Text fontSize='sm' color='muted.700' fontWeight={400}>I'm a new user. </Text>
+            <Text fontSize='sm' color='muted.700' fontWeight={400}>{stringsoflanguages.authentification.text1} </Text>
             <Link _text={{ color: 'cyan.500', bold: true, fontSize: 'sm' }}
             onPress={
               () => navigation.navigate('CreateAccount')
             }>
-              Sign Up  😊
+              {stringsoflanguages.authentification.newAccount}  😊
             </Link>
           </HStack>
         </VStack>
-      <Button onPress={() => navigation.navigate('Home')} > Home</Button>
+      <Button onPress={() => {navigation.navigate('Home') }} > Home</Button>
       </Box>
 
     </NativeBaseProvider>

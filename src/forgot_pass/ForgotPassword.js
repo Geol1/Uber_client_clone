@@ -4,6 +4,7 @@ import {NativeBaseProvider,Center,VStack,FormControl,Input,Button} from 'native-
 import {  StyleSheet, Image} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import stringsoflanguages from "../langue/screenString";
 
 function Validation() {
   
@@ -44,15 +45,15 @@ function Validation() {
       return (
             <VStack width="90%" mx={3}>
             <FormControl isRequired isInvalid={'email' in errors}>
-                <FormControl.Label _text={{bold: true}}>Email</FormControl.Label>
-                <Input placeholder="example@gmail.com" onChangeText={(value) => setData({ ...formData, email: value })} />
+                <FormControl.Label _text={{bold: true}}>{stringsoflanguages.email}</FormControl.Label>
+                <Input placeholder={stringsoflanguages.placeholderEmail} onChangeText={(value) => setData({ ...formData, email: value })} />
                 {'email' in errors ?
                 <FormControl.ErrorMessage _text={{fontSize: 'xs', color: 'error.500', fontWeight: 500}}>{errors.email}</FormControl.ErrorMessage>
         :
-                <FormControl.HelperText _text={{fontSize: 'xs'}}> Entrer l'email de votre compte.</FormControl.HelperText>
+                <FormControl.HelperText _text={{fontSize: 'xs'}}>{stringsoflanguages.reinit.description}</FormControl.HelperText>
                 }
             </FormControl>
-             <Button  onPress={onSubmit} mt={5} colorScheme="cyan"> Submit </Button>
+             <Button onPress={onSubmit} mt={5} p={0} colorScheme="cyan"> {stringsoflanguages.reinit.button1} </Button>
             </VStack>
       );
     }

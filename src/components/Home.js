@@ -1,22 +1,20 @@
 import 'react-native-gesture-handler';
 
 import * as React from 'react';
-import {
-  Button,
-  View,
-  Text,
-  TouchableOpacity,
-  Image
-} from 'react-native';
+import {Button,View,Text,TouchableOpacity,Image} from 'react-native';
 
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import FirstPage from '../explore/FirstPage';
-import SecondPage from '../explore/SecondPage';
-import ThirdPage from '../explore/ThirdPage';
+import Dashboard from '../explore/Dashboard';
+import Transaction from '../explore/Transaction';
+import HistoriqueTransaction from '../explore/HistoriqueTransaction';
 import ProfilUser from "../profil_user/ProfilUser"
+import Destination from "../screens/Destination"
+import SearchResults from "../screens/SearchResults"
+
+import stringsoflanguages from "../langue/screenString";
+
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -47,25 +45,32 @@ const NavigationDrawerStructure = (props)=> {
 
 function firstScreenStack({ navigation }) {
   return (
-      <Stack.Navigator initialRouteName="FirstPage">
+      <Stack.Navigator initialRouteName="Dashboard" 
+      screenOptions={{
+        headerLeft: ()=>
+          <NavigationDrawerStructure navigationProps={navigation}/>,
+        headerStyle: { backgroundColor: '#000' },
+        headerTintColor: '#FFF', 
+        headerTitleStyle: {fontWeight: 'bold' }
+      }}>
         <Stack.Screen
-          name="FirstPage"
-          component={FirstPage}
+          name={stringsoflanguages.home.dashboard}
+          component={Dashboard}
           options={{
-            title: 'First Page', //Set Header Title
-            headerLeft: ()=>
-              <NavigationDrawerStructure
-                navigationProps={navigation}
-              />,
-            headerStyle: {
-              backgroundColor: '#000', //Set Header color
-            },
-            headerTintColor: '#FFF', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },
-          }}
+            title: stringsoflanguages.home.dashboardTitle }}
         />
+        <Stack.Screen
+        name={stringsoflanguages.home.destination}
+        component={Destination}
+        options={{
+          title: stringsoflanguages.home.destination, //Set Header Title
+        }}/>
+        <Stack.Screen
+        name={stringsoflanguages.home.search}
+        component={SearchResults}
+        options={{
+          title: stringsoflanguages.home.searchTitle, //Set Header Title
+        }}/>
       </Stack.Navigator>
   );
 }
@@ -73,32 +78,58 @@ function firstScreenStack({ navigation }) {
 function secondScreenStack({ navigation }) {
   return (
     <Stack.Navigator
-      initialRouteName="SecondPage"
+      initialRouteName="Transaction"
+      screenOptions={{
+        headerLeft: ()=>
+          <NavigationDrawerStructure navigationProps={navigation}/>,
+        headerStyle: { backgroundColor: '#000' },
+        headerTintColor: '#FFF', //Set Header text color
+        headerTitleStyle: {fontWeight: 'bold' }
+      }}>
+      <Stack.Screen
+        name={stringsoflanguages.home.transaction}
+        component={Transaction}
+        options={{
+          title: stringsoflanguages.home.transactionTitle, //Set Header Title
+        }}/>
+      <Stack.Screen
+        name={stringsoflanguages.home.historique}
+        component={HistoriqueTransaction}
+        options={{
+          title: stringsoflanguages.home.historiqueTitle, //Set Header Title
+        }}/>
+    </Stack.Navigator>
+  );
+}
+
+function thirdsScreenStack({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="ProfilUser"
       screenOptions={{
         headerLeft: ()=>
           <NavigationDrawerStructure
             navigationProps={navigation}
           />,
         headerStyle: {
-          backgroundColor: '#000', //Set Header color
+          backgroundColor: '#000'
         },
-        headerTintColor: '#FFF', //Set Header text color
+        headerTintColor: '#FFF',
         headerTitleStyle: {
-          fontWeight: 'bold', //Set Header text style
+          fontWeight: 'bold'
         }
       }}>
       <Stack.Screen
-        name="SecondPage"
-        component={SecondPage}
+        name="ProfilUser"
+        component={ProfilUser}
         options={{
-          title: 'Second Page', //Set Header Title
-          
+          title: stringsoflanguages.home.profilTitle, //Set Header Title
         }}/>
       <Stack.Screen
-        name="ThirdPage"
-        component={ThirdPage}
+        name="HistoriqueTransaction"
+        component={HistoriqueTransaction}
         options={{
-          title: 'Third Page', //Set Header Title
+          title:  stringsoflanguages.home.historiqueTitle, //Set Header Title
         }}/>
     </Stack.Navigator>
   );
@@ -113,17 +144,17 @@ function Home() {
           itemStyle: { marginVertical: 5 },
         }}>
         <Drawer.Screen
-          name="FirstPage"
-          options={{ drawerLabel: 'First page Option' }}
+          name={stringsoflanguages.home.dashboard}
+          options={{ drawerLabel: stringsoflanguages.home.dashboardTitle }}
           component={firstScreenStack} />
         <Drawer.Screen
-          name="SecondPage"
-          options={{ drawerLabel: 'Second page Option' }}
+          name={stringsoflanguages.home.transaction}
+          options={{ drawerLabel: stringsoflanguages.home.transactionTitle }}
           component={secondScreenStack} />
         <Drawer.Screen
-          name="ProfilUser"
-          options={{ drawerLabel: 'Profil' }}
-          component={ProfilUser} />
+          name={stringsoflanguages.home.profil}
+          options={{ drawerLabel: stringsoflanguages.home.profilTitle }}
+          component={thirdsScreenStack} />
       </Drawer.Navigator>
     
   );
