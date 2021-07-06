@@ -16,7 +16,7 @@ const UberTypes = (props ) => {
       <View>
 
 
-      {typesData.map(type => <UberTypeRow type={type}/> )}
+      {typesData.map(type => <UberTypeRow type={type} key={type.id}/> )}
         
      
      

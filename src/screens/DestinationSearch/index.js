@@ -23,20 +23,23 @@ const DestinationSearch = (props) => {
 
    const navigation = useNavigation();
 
-  // const checkNavigation = () => {
-  //   if (originPlace && destinationPlace) {
-  //     navigation.navigate('SearchResult', {
-  //       originPlace,
-  //       destinationPlace,
-  //     })
-  //   }
-  // }
- // useEffect(() => {
-  //   checkNavigation();
-  // }, [originPlace, destinationPlace]);
-  // const confirm = () => {
-  //   navigation.navigate('SearchResult')
-  // }
+  const checkNavigation = () => {
+    if (originPlace && destinationPlace) {
+      navigation.navigate('SearchResult', {
+        originPlace,
+        destinationPlace,
+      })
+    }
+  }
+
+ useEffect(() => {
+    checkNavigation();
+  }, [originPlace, destinationPlace]);
+  
+
+// const confirm = () => {
+//   navigation.navigate('SearchResult')
+// }
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -98,17 +101,8 @@ const DestinationSearch = (props) => {
         {/* Square near Destination input */}
         <View style={styles.square} />
 
-{/* 
-        <Pressable onPress={confirm} style={{
-        backgroundColor: 'black',
-        padding: 5,
-        margin: 5,
-        top:300,
-      }}>
-       <Text style={{color: 'white', fontWeight: 'bold'}}>
-         Confirme Uber
-       </Text>
-     </Pressable> */}
+
+       
      
       </View>
     </SafeAreaView>
