@@ -22,7 +22,7 @@ const CustomDrawer = (props) => {
       try {
         const value = await AsyncStorage.getItem('userId')
         if(value !== null){ setId(value); setId(value) }
-      }  catch (e){console.error(e);}
+      }  catch (e){}
   }
   const state = {
     avatar:Img
@@ -43,32 +43,19 @@ useEffect(() => CurrentUser(),[id]);
     <DrawerContentScrollView {...props}>
       <View style={{backgroundColor: '#212121', padding: 15}}>
 
-        {/* User Row */}
         <View style={{
           flexDirection: 'row',
           alignItems: 'center',
         }}>
-          {/* <View style={{
-            backgroundColor: '#cacaca',
-            width: 50,
-            height: 50,
-            borderRadius: 25,
-            marginRight: 10,
-          }}/> */}
           <Image style={styles.avatar} source={state.avatar} />
           
         </View>
 
-        {/* Messages Row */}
-        
-
-        { /* Do more */}
         <Pressable
           onPress={() => {console.warn('Make Money Driving')}}>
           <Text style={{color: '#dddddd', paddingVertical: 5, marginVertical: 10}}>{user.username}</Text>
         </Pressable>
 
-        {/* Make money */}
         <Pressable onPress={() => {console.warn('Make Money Driving')}}>
           <Text style={{color: 'white', paddingVertical: 5,  marginVertical: 10}}>Tel: {user.telephone}</Text>
         </Pressable>
@@ -83,10 +70,9 @@ useEffect(() => CurrentUser(),[id]);
 
       <DrawerItemList {...props} />
 
-      {/* Make money */}
-      {/* <Pressable onPress={() => { Auth.signOut() }}>
+      <Pressable onPress={() => { Auth.signOut() }}>
         <Text style={{padding: 5, paddingLeft: 20}}>Logout</Text>
-      </Pressable> */}
+      </Pressable>
     </DrawerContentScrollView>
   );
 };

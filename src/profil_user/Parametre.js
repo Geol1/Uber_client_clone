@@ -3,9 +3,22 @@ import { View,ScrollView } from 'react-native';
 import stringsoflanguages from "../langue/screenString";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {VStack, Box, Divider,NativeBaseProvider,Text, Body,useToast,Button,Toast,Icon} from 'native-base';
+import {VStack, Box, Divider,NativeBaseProvider,Text, Body,useToast,Button,Icon} from 'native-base';
 
-
+import { ToastAndroid } from "react-native";
+const Toast = ({ visible, message }) => {
+  if (visible) {
+    ToastAndroid.showWithGravityAndOffset(
+      message,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+    return null;
+  }
+  return null;
+};
 export default class Parametre extends Component {
    
     constructor(props){
@@ -14,20 +27,40 @@ export default class Parametre extends Component {
             {shortform: "en", longform: stringsoflanguages.params.en},
             {shortform: "fr", longform: stringsoflanguages.params.fr}
         ];
+       
+       
         // toast = useToast();
         global.lang=lang;
     }
    
     settext(value){
+        this.handleButtonPress(value)
         AsyncStorage.setItem('lang',value)
         stringsoflanguages.setLanguage(value);
         // this.props.children.getLang()
         this.props.navigation.navigate("Authentification", {langue:value})
     }
+    state={
+        visibleToast: false,
+        toastM:"youpi"
+    }
+
+    // const [visibleToast, setvisibleToast] = useState(false);
+    //   const [toastM,setToastM]=useState("youpi")
+    componentDidMount(){
+        this.setState({visibleToast: false})
+    }
+    //   useEffect(() => setvisibleToast(false), [visibleToast]);
+
+    handleButtonPress = (message) => {
+        this.setState({visibleToast: false,toastM:message})
+        console.log("ok");
+      }; 
 
     render() {
         return (
         <NativeBaseProvider>
+            <Toast visible={this.state.visibleToast} message={this.state.toastM} />
         <Box border={1} borderRadius='md'>
             <VStack space={4} divider={<Divider />}>
                 <Box px={4} pt={4}>
@@ -37,6 +70,7 @@ export default class Parametre extends Component {
                 
                 <ScrollView >
                     {global.lang.map((item,key)=>{
+                        // this.handleButtonPress(item.shortform)
                         return (
                             <VStack key={key} >
                                 <Text ref={item.shortform} px={4} pt={4}
@@ -56,13 +90,7 @@ export default class Parametre extends Component {
               <View>
                   </View>
                   <Button
-                    //   onPress={() => {
-                    //     toast.show({
-                    //       title: 'Wrong password',
-                    //       placement: 'bottom',
-                    //       status: 'warning',
-                    //     });
-                    //   }}
+                      onPress={() => { this.handleButtonPress("boom")}}
                     >
                     Button
                     </Button>

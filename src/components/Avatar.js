@@ -10,22 +10,35 @@ const options = {
     maxHeight: 200,
     maxWidth: 200,
   };
-  
-  export default function Avatar({Img,setImg,Img1,setImg1}){
+  import { ToastAndroid } from "react-native";
+  const Toast = ({ visible, message }) => {
+    if (visible) {
+      ToastAndroid.showWithGravityAndOffset(
+        message,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50
+      );
+      return null;
+    }
+    return null;
+  };
+export default function Avatar({Img,setImg,Img1,setImg1}){
 
     const state = {
       avatar: Img
     }
- openPicker =()=>{
+ const openPicker =()=>{
     
     launchCamera(options, (response) => { 
     
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+       handleButtonPress('User cancelled image picker');
       } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
+       handleButtonPress('ImagePicker Error: ', response.error);
       } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
+       handleButtonPress('User tapped custom button: ', response.customButton);
       } else {
         setImg({uri:  "data:image/gif;base64,"+response.assets[0].base64})
       }
@@ -39,24 +52,27 @@ const openGallery =()=>{
         },
         (response) => {
             if (response.didCancel) {
-                console.log('User cancelled image picker');
+               handleButtonPress('User cancelled image picker');
               } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
+               handleButtonPress('ImagePicker Error: ', response.error);
               } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
+               handleButtonPress('User tapped custom button: ', response.customButton);
               } else {
-                console.log(response.assets[0].base64);
-                // setImg1({uri:  response.assets[0].base64})
                 setImg({uri:  "data:image/gif;base64,"+response.assets[0].base64})
               }
-            //   console.log(response);
         },
-        )
-    
-     
-}
+        )}
+      const [visibleToast, setvisibleToast] = useState(false);
+      const [toastM,setToastM]=useState("youpi")
+      useEffect(() => setvisibleToast(false), [visibleToast]);
+
+      const handleButtonPress = (message) => {
+        setToastM(message)
+        setvisibleToast(true);
+      };  
     return(
         <View style={styles.container}>
+          <Toast visible={visibleToast} message={toastM} />
       <View style={styles.topContainer}>
         <View style={styles.metaContainer}>
           <View>

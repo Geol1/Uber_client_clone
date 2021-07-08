@@ -101,7 +101,6 @@ export default function Authentification({route, navigation }) {
       <NativeBaseProvider>
          <View >
       <Toast visible={visibleToast} message={toastM} />
-      <Button title="Toggle Toast" onPress={() => handleButtonPress("cool")} />
     </View>
         <Toast />
       <Box flex={1} p={2} w="90%" mx='auto' >
@@ -153,7 +152,7 @@ export default function Authentification({route, navigation }) {
         </VStack>
         <Center>
       <Button   onPress={
-              () => {navigation.navigate('Home'),handleButtonPress("nccavigation su")}
+              () => {navigation.navigate('Home'),handleButtonPress("nccavigation suuccess")}
             }> Home</Button>
             </Center>
       </Box>

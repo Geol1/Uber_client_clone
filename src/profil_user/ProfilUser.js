@@ -11,7 +11,6 @@ import storage from '@react-native-firebase/storage';
 
 import stringsoflanguages from "../langue/screenString";
 import AlertController from "../components/AlertController"
-import Toast from "../components/Toast"
 
 const options = {
     mediaType:'mixed',
@@ -20,6 +19,20 @@ const options = {
     maxWidth: 200,
   };
   
+import { ToastAndroid } from "react-native";
+const Toast = ({ visible, message }) => {
+  if (visible) {
+    ToastAndroid.showWithGravityAndOffset(
+      message,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+    return null;
+  }
+  return null;
+};
 export default function Profil({navigation}){
     const [show, setShow] = useState(false);
     const toast = useToast();
@@ -36,7 +49,7 @@ export default function Profil({navigation}){
         try {
           const value = await AsyncStorage.getItem('userId')
           if(value !== null){ setId(value); setId(value) }
-        }  catch (e){console.error(e);}
+        }  catch (e){}
     }
     const state = {
       avatar:Img
@@ -47,11 +60,11 @@ export default function Profil({navigation}){
         launchCamera(options, (response) => { 
         
         if (response.didCancel) {
-            console.log('User cancelled image picker');
+            handleButtonPress('User cancelled image picker');
         } else if (response.error) {
-            console.log('ImagePicker Error: ', response.error);
+            handleButtonPress('ImagePicker Error: ', response.error);
         } else if (response.customButton) {
-            console.log('User tapped custom button: ', response.customButton);
+            handleButtonPress('User tapped custom button: ', response.customButton);
         } else {
             setImg({uri:  "data:image/gif;base64,"+response.assets[0].base64})
         }
@@ -65,26 +78,19 @@ export default function Profil({navigation}){
             },
             (response) => {
                 if (response.didCancel) {
-                    console.log('User cancelled image picker');
+                    handleButtonPress('User cancelled image picker');
                 } else if (response.error) {
-                    console.log('ImagePicker Error: ', response.error);
+                    handleButtonPress('ImagePicker Error: ', response.error);
                 } else if (response.customButton) {
-                    console.log('User tapped custom button: ', response.customButton);
+                    handleButtonPress('User tapped custom button: ', response.customButton);
                 } else {
                     setImg({uri:  "data:image/gif;base64,"+response.assets[0].base64})
                 }
-                //   console.log(response);
             },
             )
         
         
     }
-    function toaster() {
-      toastIdRef.current = toast.show({
-        title: "Hi, Nice to see you ( ´ ∀ ` )ﾉ",
-      })
-    }
-    
     const CurrentUser=() => {
          getId().then(
          firestore().collection('user').doc(id).get().then(documentSnapshot => {
@@ -105,11 +111,12 @@ export default function Profil({navigation}){
             imageRef.delete().then(() => {
               let fileUri = decodeURI(Img.uri)
               imageRef.putString(fileUri,`data_url`).then(()=>{
-                console.log(fileUri);
-                console.log("File deleted successfully")
+                handleButtonPress(fileUri);
+                handleButtonPress("File deleted successfully")
               })
               
             }).catch((error) => {
+              handleButtonPress(error.code)
             });
         });
     }
@@ -118,7 +125,7 @@ export default function Profil({navigation}){
       UpdateProfil()
     }
     const LogOut=()=>{
-      auth().signOut().then(() => navigation.navigate('Authentification'));
+      auth().signOut().then(() => {navigation.navigate('Authentification'), handleButtonPress("deconnection effectuer avec success")});
       setShow(false) 
     }
     const validate = () => {
@@ -132,12 +139,21 @@ export default function Profil({navigation}){
       return true;
     };
     useEffect(() => CurrentUser(),[id]);
+    const [visibleToast, setvisibleToast] = useState(false);
+  const [toastM,setToastM]=useState("youpi")
+  useEffect(() => setvisibleToast(false), [visibleToast]);
+
+  const handleButtonPress = (message) => {
+    setToastM(message)
+    setvisibleToast(true);
+  };
      const onSubmit = () => {
-      validate() ? EditProfil() : console.log("validation failled");
+      validate() ? EditProfil() : handleButtonPress("validation failled");
     };
     return(
       <NativeBaseProvider>
         <AlertController show={show} alert={alert} setShow={setShow} LogOut={LogOut}/>
+        <Toast visible={visibleToast} message={toastM} />
         {/* <Toast/> */}
         <Box flex={1} p={2}  w="90%" mx='auto' >
           {    <View style={styles.container}>
