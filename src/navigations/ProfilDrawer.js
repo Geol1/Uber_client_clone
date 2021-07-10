@@ -3,10 +3,7 @@ import React, {useState, useEffect,useRef} from 'react'
 import { StyleSheet, TouchableOpacity ,Image,Pressable} from 'react-native';
 import { View, Text } from "react-native";
 import {DrawerContentScrollView, DrawerItemList} from '@react-navigation/drawer';
-// import { Auth } from 'aws-amplify';
 import { useNavigation } from '@react-navigation/native';
-import ProfilUser from "../profil_user/ProfilUser";
-import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
@@ -70,8 +67,8 @@ useEffect(() => CurrentUser(),[id]);
 
       <DrawerItemList {...props} />
 
-      <Pressable onPress={() => { Auth.signOut() }}>
-        <Text style={{padding: 5, paddingLeft: 20}}>Logout</Text>
+      <Pressable onPress={() => {navigation.navigate("OrderPage")}}>
+        <Text style={{padding: 5, paddingLeft: 20}}>Visite a Yaounde</Text>
       </Pressable>
     </DrawerContentScrollView>
   );

@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react'
-import {NativeBaseProvider,Box,Text,Heading,VStack,FormControl,Input,Link,Button,Icon,IconButton,HStack,Divider} from 'native-base';
+import {NativeBaseProvider,Box,Text,Heading,VStack,FormControl,Input,Link,Button,Center} from 'native-base';
 import Avatar from '../components/Avatar';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import stringsoflanguages from "../langue/screenString";
 import { ToastAndroid } from "react-native";
@@ -20,12 +21,11 @@ const Toast = ({ visible, message }) => {
   }
   return null;
 };
-export default function CreateAccount({navigation}) {
+export default function CreateChauffeur({navigation}) {
 
   const [formData, setData] = React.useState({});
   const [errors, setErrors] = React.useState({});
-  const [Img, setImg] = useState(require('../assets/ic_newCon.jpg'));
-  
+  const [id , setId] = useState("");
   const validate = () => {
     if (formData.name === undefined || formData.email === undefined || formData.password === undefined) {
       setErrors({ ...errors, password: 'Svp veuiller remplir tous les champs.' });
@@ -36,36 +36,28 @@ export default function CreateAccount({navigation}) {
     }
     return true;
   };
-
+  const getId = async () => {
+    try {
+        
+      const value = await AsyncStorage.getItem('userId')
+      if(value !== null){ setId(value); setId(value) }
+    }  catch (e){handleButtonPress("aucun id trouve")}
+    console.log("ok "+id);
+}
   const Create=()=>{
     console.log(formData);
-    auth()
-  .createUserWithEmailAndPassword(formData.email, formData.password)
-  .then((resp) => {
-      resp.user.sendEmailVerification();
-      handleButtonPress("Authentification success :)")
-      var IdCreation=resp.user.uid;
-      const fileStoragePath = "ImageUserProfil/"+resp.user.uid;
-      const imageRef= storage().ref(fileStoragePath);
-      let fileUri = decodeURI(Img.uri)
-      imageRef.putString(fileUri,`data_url`).then(()=>{
-         console.log(fileUri);
-        firestore().doc(`user/${IdCreation}`).set({
+    getId().then((resp) => {
+      var IdCreation=id
+      console.log(IdCreation);
+        firestore().doc(`chauffeur/${IdCreation}`).set({
           username:formData.name,
           email:formData.email,
-          password:formData.password,
-          image: fileStoragePath,
+          telephone: formData.password,
           id: IdCreation,
-          telephone:'',
-          statut: "client",
+          statut: "chauffeur",
         })
-      })
-      firestore().doc(`clients/${IdCreation}`).set({
-        username:formData.name,
-        id: IdCreation,
-        listeChauffeur: ""
-      })
-      navigation.navigate('Authentification')
+      
+      navigation.navigate('Transaction')
       handleButtonPress('User account created & signed in!');
   })
   .catch(error => {
@@ -80,7 +72,7 @@ export default function CreateAccount({navigation}) {
     // console.error(error);
   });
   }
-
+  
   const [visibleToast, setvisibleToast] = useState(false);
   const [toastM,setToastM]=useState("youpi")
   useEffect(() => setvisibleToast(false), [visibleToast]);
@@ -89,18 +81,17 @@ export default function CreateAccount({navigation}) {
     setToastM(message)
     setvisibleToast(true);
   };
-
+  useEffect(() => getId(), []);
+  useEffect(() => getId(), [id]);
   const onSubmit = () => {
     validate() ? Create() : handleButtonPress("validation failled");
   };
 
  return (
       <NativeBaseProvider>
-        <Toast visible={visibleToast} message={toastM} />
-        <Avatar
-        setImg={setImg}
-        Img={Img}/>
-      <Box  p={2} w="90%" mx='auto' >
+          <Center>
+          <Toast visible={visibleToast} message={toastM} />
+      <Box  p={2} w="90%" mx='auto' mt={50} >
         
         <VStack space={0} mt={0}>
           <FormControl isRequired isInvalid={'password' in errors}>
@@ -114,8 +105,8 @@ export default function CreateAccount({navigation}) {
                
             </FormControl>
             <FormControl isRequired isInvalid={'password' in errors}>
-                <FormControl.Label _text={{bold: true}}>{stringsoflanguages.pass}</FormControl.Label>
-                <Input placeholder="*******" onChangeText={(value) => setData({ ...formData, password: value })} />
+                <FormControl.Label _text={{bold: true}}>Telephone</FormControl.Label>
+                <Input placeholder="+237 675552209" onChangeText={(value) => setData({ ...formData, password: value })} />
                 {'password' in errors ?
                 <FormControl.ErrorMessage _text={{fontSize: 'xs', color: 'error.500', fontWeight: 500}}>{errors.password}</FormControl.ErrorMessage>
         :
@@ -131,6 +122,7 @@ export default function CreateAccount({navigation}) {
 
         </VStack>
       </Box>
+      </Center>
     </NativeBaseProvider>
   );
 }

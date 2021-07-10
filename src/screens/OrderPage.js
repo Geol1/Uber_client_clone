@@ -5,8 +5,8 @@ import MapViewDirections from 'react-native-maps-directions';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
-const LATITUDE = 37.771707;
-const LONGITUDE = -122.4053769;
+const LATITUDE = 3.866667;
+const LONGITUDE = 11.516667;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
@@ -17,16 +17,15 @@ class Example extends Component {
   constructor(props) {
     super(props);
 
-    // AirBnB's Office, and Apple Park
     this.state = {
       coordinates: [
         {
-          latitude: 37.3317876,
-          longitude: -122.0054812,
+          latitude: 3.866667,
+           longitude: 11.516667,
         },
         {
-          latitude: 37.771707,
-          longitude: -122.4053769,
+          latitude: 12.871175,
+          longitude: 2.453790,
         },
       ],
     };

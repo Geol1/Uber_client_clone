@@ -8,10 +8,10 @@ import ForgotPassword from "../forgot_pass/ForgotPassword";
 // import Language from "../Language/Language"
 import Parametre from "../profil_user/Parametre"
 import OrderPage from "../screens/OrderPage";
-
-
+import MySearch from "../screens/MySearch"
 import ProfilUser from "../profil_user/ProfilUser"
 import stringsoflanguages from "../langue/screenString";
+import SuiviEnTempsReel from "../screens/SuiviEnTempsReel"
 
 
 const Stack = createStackNavigator();
@@ -31,6 +31,8 @@ export default function Navigators() {
         <Stack.Screen options={{ title: stringsoflanguages.home.setting }} name="Parametre" component={Parametre} />
         <Stack.Screen options={{ title: stringsoflanguages.home.profilTitle }} name="ProfilUser" component={ProfilUser} />
         <Stack.Screen options={{ title: stringsoflanguages.home.setting }} name="OrderPage" component={OrderPage} />
+        <Stack.Screen name="SuiviEnTempsReel" component={SuiviEnTempsReel}/>
+        <Stack.Screen name="MySearch" component={MySearch}/>
     </Stack.Navigator>
   );
 }

@@ -1,19 +1,13 @@
 export default [
   {
     id: '0',
-    type: 'UberX',
-    price: 22,
-    duration: 45,
-  },
-  {
-    id: '1',
-    type: 'Comfort',
+    type: 'Course',
     price: 27,
     duration: 30,
   },
   {
-    id: '2',
-    type: 'UberXL',
+    id: '1',
+    type: 'Depot',
     price: 36,
     duration: 27,
   },

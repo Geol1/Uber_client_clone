@@ -12,7 +12,11 @@ import HistoriqueTransaction from '../explore/HistoriqueTransaction';
 import ProfilUser from "../profil_user/ProfilUser"
 import Destination from "../screens/Destination"
 import SearchResults from "../screens/SearchResults"
+import SuiviEnTempsReel from "../screens/SuiviEnTempsReel"
+import MySearch from "../screens/MySearch"
 import ProfilDrawer from "../navigations/ProfilDrawer"
+import CreationChauffeur from "../create_account/CreationChauffeur"
+import ListeChauffeur from "../screens/ListeChauffeur"
 
 import Parametre from "../profil_user/Parametre"
 import stringsoflanguages from "../langue/screenString";
@@ -73,6 +77,12 @@ function firstScreenStack({ navigation }) {
         options={{
           title: stringsoflanguages.home.searchTitle, //Set Header Title
         }}/>
+        {/* <Stack.Screen
+        name="MySearch"
+        component={MySearch}
+        options={{
+          title: stringsoflanguages.home.searchTitle, //Set Header Title
+        }}/> */}
       </Stack.Navigator>
   );
 }
@@ -98,7 +108,19 @@ function secondScreenStack({ navigation }) {
         name={stringsoflanguages.home.historique}
         component={HistoriqueTransaction}
         options={{
-          title: stringsoflanguages.home.historiqueTitle, //Set Header Title
+          title: "Mon profile chauffeur", //Set Header Title
+        }}/>
+      <Stack.Screen
+        name="CreationChauffeur"
+        component={CreationChauffeur}
+        options={{
+          title: "Creer une Chauffeur", //Set Header Title
+        }}/>
+      <Stack.Screen
+        name="ListeChauffeur"
+        component={ListeChauffeur}
+        options={{
+          title: "Liste des Chauffeur", //Set Header Title
         }}/>
     </Stack.Navigator>
   );

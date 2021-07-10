@@ -1,20 +1,38 @@
-import React from "react";
+ import React,{useState,useEffect} from "react";
 import { View, Image, Text, Pressable ,StyleSheet} from "react-native";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-const UberTypeRow = (props) => {
-  const {type, onPress, isSelected} = props;
+const UberTypeRow = ({types,distances ,durees, onPresss, isSelecteds }) => {
+  const {type, onPress, isSelected} = {types, onPresss, isSelecteds};
+  const [course, setCourse]= useState(2000)
+  const [depot, setDepot]= useState(2500)
 
   const getImage = () => {
-    if (type.type === 'UberX') {
-      return require('../assets/images/UberX.jpeg');
+    if (type.type === 'course') {
+      return require('../assets/images/UberXL.jpeg');
     }
-    if (type.type === 'Comfort') {
+    if (type.type === 'Depot') {
       return require('../assets/images/Comfort.jpeg');
     }
     return require('../assets/images/UberXL.jpeg');
   }
+
+  const getPrice=()=>{
+    var date=new Date().getHours();
+    console.log(date);
+    if(5<=date && date<=22){
+      setCourse(2000)
+      setDepot(2500)
+    }else {
+      setCourse(2500)
+      setDepot(3000)
+    }
+    console.log(distances+"  "+durees);
+    console.log("Course:"+course+"Frcs  Depot: "+depot+"Frcs");
+  }
+
+  useEffect(() => {getPrice()}, [])
 
   return (
     <Pressable

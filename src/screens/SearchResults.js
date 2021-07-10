@@ -1,12 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {View, Dimensions, Alert} from 'react-native';
-// import { API, graphqlOperation, Auth } from 'aws-amplify';
 import RouteMap from "../components/RouteMap";
 import UberTypes from "../components/UberTypes";
-import HomeMap from '../components/HomeMap';
-// import { createOrder } from '../../graphql/mutations';
 
-import Message from '../components/Message';
 import { useRoute, useNavigation } from '@react-navigation/native';
 
 const SearchResults = (props) => {
@@ -14,64 +10,31 @@ const SearchResults = (props) => {
 
   const route = useRoute();
   const navigation = useNavigation();
-
+  const [distances,setDistance]=useState(0)
+  const [durees,setDuree]=useState(0)
   const {originPlace, destinationPlace} = route.params
 
+  const getCommandeDetail=(distance,duree)=>{
+    setDistance(distance)
+    setDuree(duree)
+  }
+  
   const onSubmit = async () => {
-    const [type] = typeState;
-    if (!type) {
-      return;
-    }
-
-    // submit to server
     try {
-      // const userInfo = await Auth.currentAuthenticatedUser();
-
-      const date = new Date();
-      const input = {
-        createdAt: date.toISOString(),
-        type,
-        originLatitude: originPlace.details.geometry.location.lat,
-        oreiginLongitude: originPlace.details.geometry.location.lng,
-
-        destLatitude: destinationPlace.details.geometry.location.lat,
-        destLongitude: destinationPlace.details.geometry.location.lng,
-
-        // userId: userInfo.attributes.sub,
-        carId: "1",
-        status: "NEW",
-      }
-
-      // const response = await API.graphql(
-      //   graphqlOperation(
-      //     createOrder, {
-      //       input: input
-      //     },
-      //   )
-      // )
-
-      // console.log(response);
-
-      navigation.navigate('OrderPage', 
-      // { id: response.data.createOrder.id }
-      );
+      navigation.navigate('SuiviEnTempsReel', {origin: originPlace.details.geometry.location ,destination: destinationPlace.details.geometry.location } );
     } catch (e) {
       console.error(e);
     }
   }
-
+  useEffect(() => { console.log(durees);}, [distances])
   return (
     <View style={{display: 'flex', justifyContent: 'space-between'}}>
       <View style={{height: Dimensions.get('window').height - 300}}>
-          {/* <HomeMap/> */}
-        <RouteMap origin={originPlace} destination={destinationPlace} />
-        {/* <RouteMap /> */}
+        <RouteMap origin={originPlace} destination={destinationPlace}  getCommandeDetail={getCommandeDetail}/>
       </View>
 
-      {/* <Message /> */}
       <View style={{height: 220}}>
-          {/* <UberTypes/> */}
-        <UberTypes typeState={typeState} onSubmit={onSubmit} />
+        <UberTypes typeState={typeState} onSubmit={onSubmit}  distances={distances} durees={durees}/>
       </View>
     </View>
   );

@@ -6,6 +6,8 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 import {useNavigation} from '@react-navigation/native'
 
+import PlaceRow from "./PlaceRow";
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { ScrollView, VStack, Center, NativeBaseProvider } from "native-base"
 
 const HomeSearch = (props) => {
@@ -20,7 +22,7 @@ const HomeSearch = (props) => {
       <ScrollView >
       <View>
       {/*  Input Box */}
-      <Pressable onPress={goToSearch} style={styles.inputBox}>
+      {/* <Pressable onPress={goToSearch} style={styles.inputBox}>
         <Text style={styles.inputText}>Where To?</Text>
 
         <View style={styles.timeContainer}>
@@ -28,23 +30,48 @@ const HomeSearch = (props) => {
           <Text>Now</Text>
           <MaterialIcons name={'keyboard-arrow-down'} size={16} />
         </View>
-      </Pressable>
+      </Pressable> */}
 
       {/* Previous destination */}
-      <View style={styles.row}>
+      {/* <View style={styles.row}>
         <View style={styles.iconContainer}>
           <AntDesign name={'clockcircle'} size={20} color={'#ffffff'} />
         </View>
         <Text style={styles.destinationText}>Spin Nightclub</Text>
-      </View>
+      </View> */}
 
       {/* Home destination */}
-      <View style={styles.row}>
+      {/* <View style={styles.row}>
         <View style={[styles.iconContainer, {backgroundColor: '#218cff'}]}>
           <Entypo name={'home'} size={20} color={'#ffffff'} />
         </View>
         <Text style={styles.destinationText}>Spin Nightclub</Text>
-      </View>
+      </View> */}
+
+<GooglePlacesAutocomplete
+          placeholder="Where from?"
+          // onPress={(data, details = null) => {
+          //   setOriginPlace({data, details});
+          // }}
+          enablePoweredByContainer={false}
+          suppressDefaultStyles
+          currentLocation={true}
+          currentLocationLabel='Current location'
+          styles={{
+            textInput: styles.textInput,
+            container: styles.autocompleteContainer,
+            listView: styles.listView,
+            separator: styles.separator,
+          }}
+          fetchDetails
+          query={{
+            key: 'AIzaSyAyTzROc_wrO-16oCrvH07HLDXPMT9jigI',
+            language: 'en',
+          }}
+          renderRow={(data) => <PlaceRow data={data} />}
+          // renderDescription={(data) => data.description || data.vicinity}
+          // predefinedPlaces={[homePlace, workPlace]}
+        />
       
     </View>
     </ScrollView>

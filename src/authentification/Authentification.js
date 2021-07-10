@@ -43,6 +43,7 @@ export default function Authentification({route, navigation }) {
     .then((result) => {
       if(result.user.emailVerified){ 
         navigation.navigate('Home'); 
+        AsyncStorage.setItem('userId',result.user.uid)
         handleButtonPress("Authentification success :)")
         add(result.user.uid)
         setId(result.user.uid)}
@@ -124,9 +125,6 @@ export default function Authentification({route, navigation }) {
                 <FormControl.HelperText _text={{fontSize: 'xs'}}>{stringsoflanguages.authentification.description} </FormControl.HelperText>
                 }
             </FormControl>
-          
-         
-
             <Link _text={{ fontSize: 'xs', fontWeight: '700', color:'cyan.500' }} alignSelf="flex-end" mt={1}
               onPress={ () => {navigation.navigate('ForgotPassword'),handleButtonPress("Entrer votre address mail")} }>
               {stringsoflanguages.authentification.oublie}

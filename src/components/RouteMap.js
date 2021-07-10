@@ -1,10 +1,7 @@
 import React,{useState,useRef} from "react";
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-
 import {Button,View,Text,SafeAreaView } from 'react-native';
-
-// import Message from './Message';
 import { Dimensions, StyleSheet } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -12,7 +9,7 @@ const ASPECT_RATIO = width / height;
 const LatitudeDelta=  0.0922;
 const GOOGLE_MAPS_APIKEY = 'AIzaSyAyTzROc_wrO-16oCrvH07HLDXPMT9jigI';
 
-const RouteMap = ({ origin, destination }) => {
+const RouteMap = ({ origin, destination ,getCommandeDetail}) => {
 
   const [distance,setDistance]=useState({distance:"0 km",duree:"0 min"})
   const mapView = useRef(null);
@@ -56,20 +53,10 @@ const RouteMap = ({ origin, destination }) => {
             }}
             onReady={result => {
               setDistance({distance:result.distance,duree:result.duration})
-              console.log(`Distance: ${result.distance} km`)
-              console.log(`Duration: ${result.duration} min.`)
-
-              // mapView.fitToCoordinates(result.coordinates, {
-              //   edgePadding: {
-              //     right: (width / 20),
-              //     bottom: (height / 20),
-              //     left: (width / 20),
-              //     top: (height / 20),
-              //   }
-              // });
+              getCommandeDetail(result.distance,result.duration)
             }}
             onError={(errorMessage) => {
-              console.log('GOT AN ERROR');
+              // console.log('GOT AN ERROR');
             }}
       />
     </MapView>
