@@ -148,11 +148,12 @@ export default function Authentification({route, navigation }) {
             </Link>
           </HStack>
         </VStack>
-        <Center>
+        
+        {/* <Center>
       <Button   onPress={
               () => {navigation.navigate('Home'),handleButtonPress("nccavigation suuccess")}
             }> Home</Button>
-            </Center>
+            </Center> */}
       </Box>
 
     </NativeBaseProvider>
